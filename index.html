@@ -111,6 +111,10 @@ dialog::backdrop{background:rgba(4,22,12,.9)}
 .ab h3{font-size:28px}.ab label{display:grid;gap:5px;font-weight:600;font-size:15px}.ab input,.ab select,.ab textarea{color:var(--ink)}
 .ab .note{opacity:.7;margin:0}#a_s{color:#ffb4a8;min-height:1.5em;margin:0}.ar2{display:flex;gap:10px;flex-wrap:wrap}#a_cfg{display:grid;gap:12px}#a_cfg[hidden]{display:none}
 #adel{font:inherit;background:none;color:#ffb4a8;border:1px solid rgba(255,180,168,.5);border-radius:999px;padding:6px 16px;cursor:pointer;flex:none}
+.pk{display:grid;gap:8px;font-weight:600;font-size:15px;justify-items:start}.vis{position:absolute;left:-9999px;opacity:0;width:1px;height:1px}
+#a_th{display:flex;gap:8px;flex-wrap:wrap}.th{position:relative;width:76px;height:76px;border-radius:12px;overflow:hidden;border:2px solid transparent}.th.cv{border-color:var(--red)}
+.th img{width:100%;height:100%;object-fit:cover;cursor:pointer;display:block}.th button{position:absolute;top:3px;inset-inline-end:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.72);color:#fff;font-size:12px;cursor:pointer}
+.bh p{white-space:pre-line}
 </style>
 </head>
 <body>
@@ -229,12 +233,16 @@ var w=document.querySelector('.wa');if(w){w.style.transition='opacity .3s,transf
  '<label>القسم<select id="a_k">'+Object.keys(KS).map(function(k){return'<option value="'+k+'">'+KS[k]+'</option>'}).join('')+'</select></label>'+
  '<label>اسم العمل<input id="a_t" maxlength="60"></label>'+
  '<label>وصف قصير<textarea id="a_d" rows="3" maxlength="220"></textarea></label>'+
- '<label>صور العمل (الأولى تكون الغلاف)<input id="a_i" type="file" accept="image/*" multiple></label>'+
+ '<div class="pk"><span>صور العمل</span><button type="button" class="btn o" id="a_pick">+ إضافة صور</button><input id="a_i" class="vis" type="file" accept="image/*" multiple><div id="a_th"></div><p class="note" id="a_c"></p></div>'+
  '<label>أو فيديو MP4 (اختياري، حتى 20 ميجا)<input id="a_v" type="file" accept="video/mp4,video/*"></label>'+
  '<p class="note">ملف PDF؟ صدّريه صورًا من Canva أو PowerPoint ثم ارفعيها هنا.</p><p id="a_s" role="status"></p>'+
  '<div class="ar2"><button type="button" class="btn" id="a_ok">نشر العمل</button><button type="button" class="btn o" id="a_x">إغلاق</button></div></div>';
  document.body.appendChild(d);
  function cfgShow(){$('a_cfg').hidden=!!(cfg.tok&&cfg.repo);$('a_repo').value=cfg.repo||''}
+ var files=[];
+ function thumbs(){var box=$('a_th');box.innerHTML='';files.forEach(function(f,i){var c=document.createElement('div');c.className='th'+(i?'':' cv');var im=document.createElement('img');im.src=URL.createObjectURL(f);im.alt='';im.title='اجعليها الغلاف';im.onclick=function(){files.unshift(files.splice(i,1)[0]);thumbs()};var x=document.createElement('button');x.type='button';x.textContent='✕';x.setAttribute('aria-label','حذف الصورة');x.onclick=function(){files.splice(i,1);thumbs()};c.appendChild(im);c.appendChild(x);box.appendChild(c)});$('a_c').textContent=files.length?files.length+' صورة. الأولى هي الغلاف، واضغطي على أي صورة لتجعليها الغلاف.':''}
+ $('a_pick').onclick=function(){$('a_i').click()};
+ $('a_i').onchange=function(){[].slice.call(this.files).forEach(function(f){if(files.length<12)files.push(f)});this.value='';thumbs()};
  bt.onclick=function(){cfgShow();$('a_s').textContent='';d.showModal()};$('a_x').onclick=function(){d.close()};
  function enc(c,q){var u=c.toDataURL('image/webp',q);return u.indexOf('image/webp')==5?u:c.toDataURL('image/jpeg',q)}
  function ext(u){return u.indexOf('image/jpeg')==5?'jpg':'webp'}
@@ -254,7 +262,7 @@ var w=document.querySelector('.wa');if(w){w.style.transition='opacity .3s,transf
  async function readList(){try{var j=await api('works.json');return{list:JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))))),sha:j.sha}}catch(e){if(e.status==404)return{list:[],sha:undefined};throw e}}
  function writeList(list,sha,msg){return api('works.json','PUT',{message:msg,sha:sha,content:btoa(unescape(encodeURIComponent(JSON.stringify(list,null,1))))})}
  function why(e){return e.status==401?'المفتاح غير صحيح أو منتهي.':(e.status==403||e.status==404)?'لا توجد صلاحية على المستودع. تأكدي من اسم المستودع وصلاحيات المفتاح (Contents: Read and write).':e.status==422?'الملف موجود مسبقًا. حاولي مرة ثانية.':'تعذر الرفع: '+(e.message||'')}
- $('a_ok').onclick=async function(){var st=$('a_s'),b=$('a_ok'),t=$('a_t').value.trim(),imgs=[].slice.call($('a_i').files),vf=$('a_v').files[0];
+ $('a_ok').onclick=async function(){var st=$('a_s'),b=$('a_ok'),t=$('a_t').value.trim(),imgs=files.slice(),vf=$('a_v').files[0];
   if(!cfg.tok||!cfg.repo){var r=$('a_repo').value.trim(),k=$('a_tok').value.trim();if(!r||!k){st.textContent='أدخلي المستودع والمفتاح.';return}cfg={repo:r,tok:k};try{localStorage.setItem('nsq',JSON.stringify(cfg))}catch(e){}}
   if(!t){st.textContent='اكتبي اسم العمل.';return}
   if(!imgs.length&&!vf){st.textContent='اختاري صورة أو فيديو.';return}
@@ -269,7 +277,7 @@ var w=document.querySelector('.wa');if(w){w.style.transition='opacity .3s,transf
     for(i=0;i<im.length;i++){st.textContent='جاري رفع الصورة '+(i+1)+' من '+im.length+'...';var u=shrink(im[i],1100,.8),pa='works/'+id+'-'+(i+1)+'.'+ext(u);await up(pa,u);w.imgs.push(pa)}
     var tl=tileOf(im[0]);w.tile='works/'+id+'-cover.'+ext(tl.u);await up(w.tile,tl.u);w.fit=tl.fit}
    st.textContent='جاري تحديث قائمة الأعمال...';var L=await readList();L.list.unshift(w);await writeList(L.list,L.sha,'add work '+t);
-   st.textContent='تم! سيظهر العمل في الموقع خلال دقيقة أو دقيقتين، ثم حدّثي الصفحة.';b.disabled=false}
+   st.textContent='تم! سيظهر العمل في الموقع خلال دقيقة أو دقيقتين، ثم حدّثي الصفحة.';files=[];thumbs();$('a_t').value='';$('a_d').value='';$('a_v').value='';b.disabled=false}
   catch(e){b.disabled=false;st.textContent=why(e);if(e.status==401){cfg.tok='';cfgShow()}}};
  var del=document.createElement('button'),lx=$('lbx');del.type='button';del.id='adel';del.textContent='حذف العمل';lx.parentNode.insertBefore(del,lx);
  var arm=0;del.onclick=async function(){if(!cw)return;if(!arm){del.textContent='اضغطي مرة ثانية للتأكيد';arm=setTimeout(function(){arm=0;del.textContent='حذف العمل'},4000);return}
