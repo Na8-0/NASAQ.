@@ -4,9 +4,9 @@
   "t": "PG | هوية قهوة مختصة",
   "d": "هوية بصرية متكاملة لعلامة قهوة مختصة: الغلاف، قائمة المنيو، وتطبيق الشعار على الأكواب.",
   "imgs": [
-   "works/pg-identity-1.webp",
-   "works/pg-identity-2.webp",
-   "works/pg-identity-3.webp"
+   "pg-identity-1.webp",
+   "pg-identity-2.webp",
+   "pg-identity-3.webp"
   ],
   "tile": "works/pg-identity-cover.webp"
  },
@@ -15,26 +15,26 @@
   "t": "اقتصاد القهوة العالمي",
   "d": "عرض تقديمي تحليلي من 10 شرائح عن اقتصاد القهوة، بتصميم متناسق وألوان دافئة.",
   "imgs": [
-   "works/coffee-economics-1.webp",
-   "works/coffee-economics-2.webp",
-   "works/coffee-economics-3.webp",
-   "works/coffee-economics-4.webp",
-   "works/coffee-economics-5.webp",
-   "works/coffee-economics-6.webp",
-   "works/coffee-economics-7.webp",
-   "works/coffee-economics-8.webp",
-   "works/coffee-economics-9.webp",
-   "works/coffee-economics-10.webp"
+   "coffee-economics-1.webp",
+   "coffee-economics-2.webp",
+   "coffee-economics-3.webp",
+   "coffee-economics-4.webp",
+   "coffee-economics-5.webp",
+   "coffee-economics-6.webp",
+   "coffee-economics-7.webp",
+   "coffee-economics-8.webp",
+   "coffee-economics-9.webp",
+   "coffee-economics-10.webp"
   ],
-  "tile": "works/coffee-economics-cover.webp"
+  "tile": "coffee-economics-cover.webp"
  },
  {
   "k": "po",
   "t": "بورتفوليو الفضاء",
   "d": "موقع تفاعلي عن الفضاء: مجرة متحركة، كواكب مرسومة بالكود، ومحاكي لمدارات الكواكب.",
-  "video": "works/space-portfolio.mp4",
-  "poster": "works/space-portfolio-cover.webp",
-  "tile": "works/space-portfolio-cover.webp",
+  "video": "space-portfolio.mp4",
+  "poster": "space-portfolio-cover.webp",
+  "tile": "space-portfolio-cover.webp",
   "fit": true
  }
 ]
